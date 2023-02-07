@@ -9,7 +9,7 @@ const Workout = (props) => {
     <View style={styles.item}>
       <View style={styles.itemLeft}>
         <View style={styles.square}></View>
-        <Text style={styles.itemText}>{props.text}</Text>
+        <TextInput style={styles.itemText}>{props.text}</TextInput>
       </View>
 
       <View style={styles.setsAndReps}>
