@@ -2,9 +2,12 @@ import React from "react";
 import { Text, View } from "react-native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
+// Importing Screens
 import Home from "./Home";
 import Settings from "./Settings";
 import WorkoutLog from "./screens/WorkoutLog";
+import TestPage from "./TestPage";
+import LogIn from "./LogIn";
 
 const Drawer = createDrawerNavigator();
 
@@ -12,12 +15,14 @@ const YourApp = () => {
   return (
     <NavigationContainer>
       <Drawer.Navigator
-        initialRouteName="Home"
+        initialRouteName="Log In"
         screenOptions={{ headerShown: false }}
       >
+        <Drawer.Screen name="Log In" component={LogIn} />
         <Drawer.Screen name="Home" component={Home} />
-        <Drawer.Screen name="Settings" component={Settings} />
         <Drawer.Screen name="New Workout" component={WorkoutLog} />
+        <Drawer.Screen name="Test Page" component={TestPage} />
+        <Drawer.Screen name="Settings" component={Settings} />
       </Drawer.Navigator>
     </NavigationContainer>
   );

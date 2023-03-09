@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { createElement, useState } from "react";
+import React, { useState } from "react";
 import {
   Keyboard,
   StyleSheet,
@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   TextInput,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+// import { SafeAreaView } from "react-native-safe-area-context"; <-- Look into: Worth it, advantage over plain view?
 import Workout from "../components/workout";
 
 const NewExerciseButton = ({ onPress, title }) => {
@@ -37,6 +37,7 @@ const DeleteExerciseButton = ({ onPress, title }) => {
   );
 };
 
+// NEEDS IMPLEMENTATION, add "onPress" back to function arguments
 const SaveWorkoutButton = ({ title }) => {
   return (
     <TouchableOpacity
@@ -53,7 +54,7 @@ export default function App() {
   const [exerciseList, setExerciseList] = useState([
     "Barbell Back Squats",
     "Romanian Deadlifts",
-    "Dumbell Walking Lunges",
+    "Dumbbell Walking Lunges",
     "Lying Hamstring Curls",
     "Seated Calf Raises",
   ]);
@@ -66,7 +67,7 @@ export default function App() {
     setExerciseList(exerciseList.slice(0, -1));
   };
   // // Implementation for save exercise button
-  // const SaveWorkoutButton = () => {
+  // const handleSaveWorkout = () => {
 
   // }
 
