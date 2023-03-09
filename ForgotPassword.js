@@ -6,15 +6,11 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import ForgotPassword from "./ForgotPassword";
 
-export default function LogIn() {
+export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
-  const navigation = useNavigation();
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
@@ -27,6 +23,9 @@ export default function LogIn() {
   return (
     <View style={styles.container}>
       <Text style={styles.appName}>Welcome to Spotter.io!</Text>
+      <Text style={styles.forgotPasswordTitle}>
+        You forgot your password? Let's get you back in:
+      </Text>
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
@@ -52,12 +51,6 @@ export default function LogIn() {
           </Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity
-        style={styles.forgotPasswordButton}
-        onPress={() => navigation.navigate(ForgotPassword)}
-      >
-        <Text>Forgot Password?</Text>
-      </TouchableOpacity>
       <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
         <Text style={styles.loginButtonText}>Log In</Text>
       </TouchableOpacity>
@@ -88,6 +81,10 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     padding: 8,
+  },
+  forgotPasswordTitle: {
+    fontSize: 18,
+    marginBottom: 3,
   },
   showPasswordButton: {
     paddingHorizontal: 12,
