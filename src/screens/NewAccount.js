@@ -7,8 +7,9 @@ import {
   TouchableOpacity,
   FlatList,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
-export default function App() {
+export default function NewAccount() {
   // Constants may need to be re-worked for mongo db integration
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -25,10 +26,16 @@ export default function App() {
     // Create account logic will go here
   };
 
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
       <Text style={styles.appName}>Welcome to Spotter.io!</Text>
       <Text style={styles.createAccountTitle}>Let's create your account:</Text>
+      <Text style={styles.instructions}>
+        Please complete the fields below, biometrics and fitness goals will be
+        entered later!
+      </Text>
       {/* For first name field */}
       <View style={styles.inputContainer}>
         <TextInput
@@ -53,6 +60,7 @@ export default function App() {
           style={styles.input}
           placeholder="Email"
           value={email}
+          keyboardType="email-address"
           onChangeText={(text) => setEmail(text)}
         />
       </View>
@@ -112,6 +120,12 @@ export default function App() {
         </TouchableOpacity>
       </View>
       <TouchableOpacity
+        onPress={() => navigation.navigate("Log In")}
+        activeOpacity={0.5}
+      >
+        <Text style={{ color: "blue" }}>Back to Log In </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
         style={styles.createAccountButton}
         onPress={handleCreateAccount}
       >
@@ -144,6 +158,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     borderColor: "#ccc",
+    marginHorizontal: 10,
   },
   // listContainer: {
   //   marginLeft: 0,
@@ -151,6 +166,12 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     padding: 8,
+  },
+  instructions: {
+    fontSize: 15,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    textAlign: "center",
   },
   showPasswordButton: {
     paddingHorizontal: 12,

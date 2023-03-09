@@ -5,28 +5,29 @@ import {
   View,
   TextInput,
   TouchableOpacity,
+  Pressable,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import ForgotPassword from "./ForgotPassword";
 
-export default function LogIn() {
+export default function ForgotPassword() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
 
-  const navigation = useNavigation();
-
-  const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const handleLogin = () => {
+  const handleForgot = () => {
     // Log in logic will go here
   };
+
+  const navigation = useNavigation();
 
   return (
     <View style={styles.container}>
       <Text style={styles.appName}>Welcome to Spotter.io!</Text>
+      <Text style={styles.forgotPasswordTitle}>
+        You forgot your password? Let's get you back in:
+      </Text>
+      <Text style={styles.instructions}>
+        Please enter the email associated with the account, and an access code
+        will be sent to your inbox.
+      </Text>
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
@@ -35,31 +36,14 @@ export default function LogIn() {
           onChangeText={(text) => setEmail(text)}
         />
       </View>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          secureTextEntry={!showPassword}
-          value={password}
-          onChangeText={(text) => setPassword(text)}
-        />
-        <TouchableOpacity
-          style={styles.showPasswordButton}
-          onPress={toggleShowPassword}
-        >
-          <Text style={styles.showPasswordButtonText}>
-            {showPassword ? "Hide" : "Show"}
-          </Text>
-        </TouchableOpacity>
-      </View>
       <TouchableOpacity
-        style={styles.forgotPasswordButton}
-        onPress={() => navigation.navigate(ForgotPassword)}
+        onPress={() => navigation.navigate("Log In")}
+        activeOpacity={0.5}
       >
-        <Text>Forgot Password?</Text>
+        <Text style={{ color: "blue" }}>Back to Log in?</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-        <Text style={styles.loginButtonText}>Log In</Text>
+      <TouchableOpacity style={styles.submitButton} onPress={handleForgot}>
+        <Text style={styles.submitButtonText}>Get Code</Text>
       </TouchableOpacity>
     </View>
   );
@@ -84,10 +68,22 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     borderColor: "#ccc",
+    marginHorizontal: 10,
   },
   input: {
     flex: 1,
     padding: 8,
+  },
+  instructions: {
+    fontSize: 15,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    textAlign: "center",
+  },
+  forgotPasswordTitle: {
+    fontSize: 18,
+    marginBottom: 3,
+    marginHorizontal: 10,
   },
   showPasswordButton: {
     paddingHorizontal: 12,
@@ -96,14 +92,14 @@ const styles = StyleSheet.create({
     color: "blue",
     fontWeight: "bold",
   },
-  loginButton: {
+  submitButton: {
     backgroundColor: "blue",
     paddingHorizontal: 32,
     paddingVertical: 16,
     borderRadius: 8,
     marginTop: 32,
   },
-  loginButtonText: {
+  submitButtonText: {
     color: "#fff",
     fontWeight: "bold",
   },

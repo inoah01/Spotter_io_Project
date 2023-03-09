@@ -2,14 +2,16 @@ import React from "react";
 import { Text, View } from "react-native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
+// import { createNativeStackNavigator } from "@react-navigation/native-stack";
+// import MainStackNavigator from "./src/navigator/StackNavigator";
 // Importing Screens
-import Home from "./Home";
-import Settings from "./Settings";
-import WorkoutLog from "./screens/WorkoutLog";
-import TestPage from "./TestPage";
-import LogIn from "./LogIn";
-import NewAccount from "./NewAccount";
-import ForgotPassword from "./ForgotPassword";
+import Home from "./src/screens/Home";
+import Settings from "./src/screens/Settings";
+import WorkoutLog from "./src/screens/WorkoutLog";
+import TestPage from "./src/screens/TestPage";
+import LogIn from "./src/screens/LogIn";
+import NewAccount from "./src/screens/NewAccount";
+import ForgotPassword from "./src/screens/ForgotPassword";
 
 const Drawer = createDrawerNavigator();
 

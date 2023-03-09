@@ -6,26 +6,26 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
-export default function ForgotPassword() {
+export default function LogIn({}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  const navigation = useNavigation();
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
   };
 
   const handleLogin = () => {
-    // Log in logic will go here
+    return navigation.navigate("Home");
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.appName}>Welcome to Spotter.io!</Text>
-      <Text style={styles.forgotPasswordTitle}>
-        You forgot your password? Let's get you back in:
-      </Text>
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
@@ -51,8 +51,20 @@ export default function ForgotPassword() {
           </Text>
         </TouchableOpacity>
       </View>
+      <TouchableOpacity
+        onPress={() => navigation.navigate("Forgot Password")}
+        activeOpacity={0.5}
+      >
+        <Text style={{ color: "blue" }}>Forgot Password?</Text>
+      </TouchableOpacity>
       <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
         <Text style={styles.loginButtonText}>Log In</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.newUserButton}
+        onPress={() => navigation.navigate("New Account")}
+      >
+        <Text style={styles.loginButtonText}>Create Account</Text>
       </TouchableOpacity>
     </View>
   );
@@ -77,14 +89,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     borderColor: "#ccc",
+    marginHorizontal: 10,
   },
   input: {
     flex: 1,
     padding: 8,
-  },
-  forgotPasswordTitle: {
-    fontSize: 18,
-    marginBottom: 3,
   },
   showPasswordButton: {
     paddingHorizontal: 12,
@@ -103,5 +112,12 @@ const styles = StyleSheet.create({
   loginButtonText: {
     color: "#fff",
     fontWeight: "bold",
+  },
+  newUserButton: {
+    backgroundColor: "grey",
+    paddingHorizontal: 32,
+    paddingVertical: 16,
+    borderRadius: 8,
+    marginTop: 32,
   },
 });
