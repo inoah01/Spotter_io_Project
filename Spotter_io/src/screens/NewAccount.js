@@ -6,30 +6,46 @@ import {
   TextInput,
   TouchableOpacity,
   FlatList,
+  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 export default function NewAccount() {
-  // Constants may need to be re-worked into single object for POST to Flask back end?
+  // Saves correctly saves user data in object, ready for API call?
   const [signupInfo, setSignupInfo] = useState({
     firstName: "",
     lastName: "",
     email: "",
     phoneNum: "",
     password: "",
+    confirmPassword: "",
   });
 
   // For hiding user's password
   const [showPassword, setShowPassword] = useState(false);
-  const [reEnterPassword, setReEnterPassword] = useState("");
 
+  // For handling phone number formatting (...eventually)
+
+  // For checking if submitted (test output)
+  const [isSubmitted, setIsSubmitted] = useState("");
+
+  // Toggling password visibility
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
   };
 
   const handleCreateAccount = () => {
-    // Create account logic will go here
-    return console.log(signupInfo.firstName);
+    // Create account logic will go here:
+    // Validating passwords match
+    if (signupInfo.password !== signupInfo.confirmPassword) {
+      console.log("Passwords do not match, populate alert message");
+    } else {
+      //Test output, API auth logic will go here
+      console.log("Passwords match, make API call");
+      //Test Outputs
+      console.log(signupInfo);
+      setIsSubmitted(true);
+    }
   };
 
   const navigation = useNavigation();
@@ -49,7 +65,7 @@ export default function NewAccount() {
           placeholder="First Name"
           value={signupInfo.firstName}
           onChangeText={(text) => {
-            setSignupInfo({ firstName: text });
+            setSignupInfo({ ...signupInfo, firstName: text });
             signupInfo.firstName;
           }}
         />
@@ -61,20 +77,33 @@ export default function NewAccount() {
           placeholder="Last Name"
           value={signupInfo.lastName}
           onChangeText={(text) => {
-            setSignupInfo({ lastName: text });
+            setSignupInfo({ ...signupInfo, lastName: text });
           }}
         />
       </View>
       {/* Phone number field will go here */}
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          keyboardType="phone-pad"
+          input
+          placeholder="XXX-XXX-XXXX"
+          value={signupInfo.phoneNum}
+          onChangeText={(text) => {
+            setSignupInfo({ ...signupInfo, phoneNum: text });
+          }}
+          mask={"([000])-[000]-[0000]"}
+        />
+      </View>
       {/* Email field */}
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
-          placeholder="Email"
+          placeholder="Your.Email@example.com"
           value={signupInfo.email}
           keyboardType="email-address"
           onChangeText={(text) => {
-            setSignupInfo({ email: text });
+            setSignupInfo({ ...signupInfo, email: text });
           }}
         />
       </View>
@@ -86,7 +115,7 @@ export default function NewAccount() {
           secureTextEntry={!showPassword}
           value={signupInfo.password}
           onChangeText={(text) => {
-            setSignupInfo({ password: text });
+            setSignupInfo({ ...signupInfo, password: text });
           }}
         />
         <TouchableOpacity
@@ -104,8 +133,10 @@ export default function NewAccount() {
           style={styles.input}
           placeholder="Re-Enter Password"
           secureTextEntry={!showPassword}
-          value={reEnterPassword}
-          onChangeText={(text) => setReEnterPassword(text)}
+          value={signupInfo.confirmPassword}
+          onChangeText={(text) => {
+            setSignupInfo({ ...signupInfo, confirmPassword: text });
+          }}
         />
         <TouchableOpacity
           style={styles.showPasswordButton}
@@ -128,6 +159,9 @@ export default function NewAccount() {
       >
         <Text style={styles.createAccountText}>Create Account</Text>
       </TouchableOpacity>
+      {isSubmitted && (
+        <Text style={styles.successMessage}>Info Successfully Submitted!!</Text>
+      )}
     </View>
   );
 }
@@ -147,6 +181,10 @@ const styles = StyleSheet.create({
   createAccountTitle: {
     fontSize: 18,
     marginBottom: 3,
+  },
+  failureMessage: {
+    color: "red",
+    marginTop: 10,
   },
   inputContainer: {
     flexDirection: "row",
@@ -176,6 +214,9 @@ const styles = StyleSheet.create({
   showPasswordButtonText: {
     color: "blue",
     fontWeight: "bold",
+  },
+  successMessage: {
+    marginTop: 10,
   },
   // item: {
   //   flex: 1,
