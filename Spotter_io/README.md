@@ -8,13 +8,12 @@ Coming soon . . .
 
 
 <h3>
-To-Do 2/26/2023:
+To-Do 3/9/2023:
 </h3>
 <ul>
-<li>MongoDB for user/workout data</li>
-<li>Add in functionality for "Save Workout" button</li>
-<li>Create log-in page for matching workout data with users (along with "Create New Account" and "Forgot Password?"</li>
-<li>Page to see past workout data?</li>
-<li>Add expandable list to each exercise row for further metadata (individual sets, RPE, notes, etc)</li>
-<li>Relocate current screens to "screens" folder</li>
+<li>MongoDB for user/workout data (enough for functional log in?)</li>
+<li>Add password requirements (description and check) to New Account</li>
+<li>Move drawer navigation to src folder</li>
+<li>Finish workout tracking UI (expandable list view for metrics, timer, colors, spacing of elements, etc)</li>
+<li>Workout History page?</li>
 
