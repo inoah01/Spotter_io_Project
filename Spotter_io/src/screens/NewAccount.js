@@ -10,11 +10,16 @@ import {
 import { useNavigation } from "@react-navigation/native";
 
 export default function NewAccount() {
-  // Constants may need to be re-worked for mongo db integration
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  // Constants may need to be re-worked into single object for POST to Flask back end?
+  const [signupInfo, setSignupInfo] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNum: "",
+    password: "",
+  });
+
+  // For hiding user's password
   const [showPassword, setShowPassword] = useState(false);
   const [reEnterPassword, setReEnterPassword] = useState("");
 
@@ -24,6 +29,7 @@ export default function NewAccount() {
 
   const handleCreateAccount = () => {
     // Create account logic will go here
+    return console.log(signupInfo.firstName);
   };
 
   const navigation = useNavigation();
@@ -41,8 +47,11 @@ export default function NewAccount() {
         <TextInput
           style={styles.input}
           placeholder="First Name"
-          value={firstName}
-          onChangeText={(text) => setFirstName(text)}
+          value={signupInfo.firstName}
+          onChangeText={(text) => {
+            setSignupInfo({ firstName: text });
+            signupInfo.firstName;
+          }}
         />
       </View>
       {/* For Last Name field */}
@@ -50,47 +59,35 @@ export default function NewAccount() {
         <TextInput
           style={styles.input}
           placeholder="Last Name"
-          value={lastName}
-          onChangeText={(text) => setLastName(text)}
+          value={signupInfo.lastName}
+          onChangeText={(text) => {
+            setSignupInfo({ lastName: text });
+          }}
         />
       </View>
+      {/* Phone number field will go here */}
       {/* Email field */}
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
           placeholder="Email"
-          value={email}
+          value={signupInfo.email}
           keyboardType="email-address"
-          onChangeText={(text) => setEmail(text)}
+          onChangeText={(text) => {
+            setSignupInfo({ email: text });
+          }}
         />
       </View>
       {/* Password field */}
-      {/* Criteria for password: x characters? upper/lower case? special characters? -> Function to check if it does + bullet points above describing criteria  */}
-      {/* <View style={styles.listContainer}>
-        <Text>Password Requirements:</Text>
-        <FlatList
-          data={[
-            { key: "Must be 10-12 characters" },
-            {
-              key: "Must contain at least one uppercase and one lowercase letter",
-            },
-            { key: "Must include at least one non-alphanumeric character" },
-          ]}
-          renderItem={({ item }) => (
-            <Text style={styles.item}>
-              {"\u2B24" + " "}
-              {item.key}
-            </Text>
-          )}
-        />
-      </View> */}
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
           placeholder="Password"
           secureTextEntry={!showPassword}
-          value={password}
-          onChangeText={(text) => setPassword(text)}
+          value={signupInfo.password}
+          onChangeText={(text) => {
+            setSignupInfo({ password: text });
+          }}
         />
         <TouchableOpacity
           style={styles.showPasswordButton}
