@@ -8,7 +8,7 @@ Coming soon . . .
 
 
 <h3>
-To-Do 3/9/2023:
+Up Next as of 3/10/2023:
 </h3>
 <ul>
 <li>Create necessary MongoDB collections (+ delete test collections)</li>
