@@ -8,13 +8,13 @@ Coming soon . . .
 
 
 <h3>
-To-Do as of 3/10/2023:
+To-Do as of 3/11/2023:
 </h3>
 <ul>
-<li>Create necessary MongoDB collections (+ delete test collections)</li>
-<li>Basic CRUD (specifically user account data + workout data)</li>
-<li>Log-in auth (front-end API connection points, encryption before DB)</li>
-<li>Move drawer navigation to src folder</li>
+<li>Create front-end fetch for user data</li>
+<li>Implement password encryption</li>
+<li>Complete Log-in auth flow (tokens, navigation, POST/GET, etc)</li>
 <li>Finish workout tracking UI (expandable list view for metrics, timer, colors, spacing of elements, etc)</li>
+<li>Implement CRUD for workout tracking</li>
 <li>Workout History page?</li>
 
