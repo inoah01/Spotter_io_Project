@@ -1,5 +1,4 @@
 # Script for establishing connection to MongoDB
-#test git
 from bson import encode, decode
 from flask import Flask, Response
 import os, json
