@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { initializeApp } from "firebase/app";
 import app from "../firebase";
 
-const auth = getAuth(app);
+// Can be compiled into firebase.js?
+export const auth = getAuth(app);
 
 export function useAuth() {
   const [user, setUser] = React.useState(null);

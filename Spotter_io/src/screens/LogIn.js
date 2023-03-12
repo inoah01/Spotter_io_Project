@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../hooks/useAuth";
 
 export default function LogIn({}) {
   const [email, setEmail] = useState("");
@@ -21,18 +22,24 @@ export default function LogIn({}) {
   };
 
   // Implementation needs to be fixed, getting server error
-  const handleLogin = async (email, password) => {
-    try {
-      const auth = getAuth();
-      await signInWithEmailAndPassword(auth, email, password).then(
-        (userCredential) => {
-          const user = userCredential.user;
-          console.log(user);
-        }
-      );
-    } catch (e) {
-      console.error(e.message);
-    }
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    await signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        //navigation goes here
+        console.log(user);
+      })
+      // .then((userInfo) => {
+      //   // Logic for checking with db
+      // });
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode, errorMessage);
+      });
   };
 
   return (
