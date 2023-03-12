@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 export default function LogIn({}) {
   const [email, setEmail] = useState("");
@@ -19,8 +20,19 @@ export default function LogIn({}) {
     setShowPassword(!showPassword);
   };
 
-  const handleLogin = () => {
-    return navigation.navigate("Home");
+  // Implementation needs to be fixed, getting server error
+  const handleLogin = async (email, password) => {
+    try {
+      const auth = getAuth();
+      await signInWithEmailAndPassword(auth, email, password).then(
+        (userCredential) => {
+          const user = userCredential.user;
+          console.log(user);
+        }
+      );
+    } catch (e) {
+      console.error(e.message);
+    }
   };
 
   return (

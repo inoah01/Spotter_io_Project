@@ -11,7 +11,7 @@ import {
   TextInput,
 } from "react-native";
 // import { SafeAreaView } from "react-native-safe-area-context"; <-- Look into: Worth it, advantage over plain view?
-import Workout from "../../components/workout";
+import Workout from "../components/workout";
 
 const NewExerciseButton = ({ onPress, title }) => {
   return (
