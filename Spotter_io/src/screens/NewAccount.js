@@ -9,6 +9,8 @@ import {
   Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../hooks/useAuth";
 
 export default function NewAccount() {
   // Saves correctly saves user data in object, ready for API call?
@@ -34,12 +36,26 @@ export default function NewAccount() {
     setShowPassword(!showPassword);
   };
 
-  const handleCreateAccount = () => {
+  const handleCreateAccount = async (e) => {
     // Create account logic will go here:
     // Validating passwords match
     if (signupInfo.password !== signupInfo.confirmPassword) {
       console.log("Passwords do not match, populate alert message");
     } else {
+      await createUserWithEmailAndPassword(
+        auth,
+        signupInfo.email,
+        signupInfo.password
+      )
+        .then((userCredential) => {
+          const user = userCredential.user;
+          console.log(user);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(errorCode, errorMessage);
+        });
       //Test output, API auth logic will go here
       console.log("Passwords match, make API call");
       //Test Outputs

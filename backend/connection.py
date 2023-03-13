@@ -1,6 +1,6 @@
 # Script for establishing connection to MongoDB
 from bson import encode, decode
-from flask import Flask, Response
+from flask import Flask, Response, request, jsonify
 import os, json
 # Allows bsons with ObjectID to be parsed and converted to json
 import bson.json_util as json_util
@@ -82,6 +82,28 @@ def create_user():
             {"message": "Cannot add user :(",}),
             # Internal server error
             status=500,
+            mimetype="application/json"
+        )
+#############################################
+@app.route("/user/login", methods=['POST'])
+def authenticate():
+    try:
+        data = request.get_json() # Accessing the data sent in the payload of the front-end axios request
+        email = data["email"]
+        firebase_token = data["firebase_token"]
+        print(f'Firebase Token: {firebase_token}')
+        print(f'Email: {email}')
+        return Response(
+            response=json_util.dumps({"message": "data successfully retrieved from front-end"}),
+            status=200,
+            mimetype="application/json"
+        )
+    except Exception as ex:
+        print(ex)
+        return Response(
+            response=json.dumps({"message":"data pull from front-end unsuccessful"}),
+            # Client Error Bad Request
+            status=400,
             mimetype="application/json"
         )
 

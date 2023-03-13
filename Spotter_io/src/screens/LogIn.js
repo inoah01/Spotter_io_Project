@@ -9,11 +9,15 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../hooks/useAuth";
+import axios, { formToJSON } from "axios";
+import deviceStorage from "../services/deviceStorage";
+import { user_login } from "../services/api/api_utils";
 
 export default function LogIn({}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [firebaseToken, setFirebaseToken] = useState("");
 
   const navigation = useNavigation();
 
@@ -21,7 +25,6 @@ export default function LogIn({}) {
     setShowPassword(!showPassword);
   };
 
-  // Implementation needs to be fixed, getting server error
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -29,8 +32,14 @@ export default function LogIn({}) {
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
-        //navigation goes here
-        console.log(user);
+        console.log("user state set");
+        setEmail(user.email);
+        setFirebaseToken(user.getIdToken);
+        console.log(user.email);
+        user_login({
+          firebase_token: user.getIdToken,
+          email: user.email,
+        });
       })
       // .then((userInfo) => {
       //   // Logic for checking with db
@@ -39,6 +48,7 @@ export default function LogIn({}) {
         const errorCode = error.code;
         const errorMessage = error.message;
         console.log(errorCode, errorMessage);
+        console.log("user log in error");
       });
   };
 
