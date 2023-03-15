@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "SmartTrack",
-    "slug": "SmartTrack",
+    "name": "spotter_io",
+    "slug": "spotter_io",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

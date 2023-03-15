@@ -44,10 +44,11 @@ export default function UserStack() {
         }}
       >
         <Drawer.Screen name="Home" component={Home} />
-        <Drawer.Screen name="New Workout" component={WorkoutLog} />
+        <Drawer.Screen name="New Workout" component={WorkoutLog} options={{headerShown: false}} />
         <Drawer.Screen name="Test Page" component={TestPage} />
         <Drawer.Screen name="Settings" component={Settings} />
       </Drawer.Navigator>
     </NavigationContainer>
   );
 }
+

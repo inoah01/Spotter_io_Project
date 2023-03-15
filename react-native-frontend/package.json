@@ -1,8 +1,7 @@
 {
-  "name": "Spotter_io",
+  "name": "spotter_io",
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
-  "proxy": "https://127.0.0.1:80/",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -10,6 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo/devcert": "^1.1.0",
     "@react-navigation/bottom-tabs": "^6.5.4",
     "@react-navigation/drawer": "^6.6.1",
     "@react-navigation/native": "^6.1.5",
@@ -34,5 +34,6 @@
   "devDependencies": {
     "@babel/core": "^7.20.0"
   },
-  "private": true
+  "private": true,
+  "proxy": "http://127.0.0.1:5000"
 }

@@ -17,7 +17,6 @@ export default function LogIn({}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [firebaseToken, setFirebaseToken] = useState("");
 
   const navigation = useNavigation();
 
@@ -27,29 +26,27 @@ export default function LogIn({}) {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    let user;
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      user = userCredential.user;
+      console.log(user.uid);
+    } catch (error) {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log(errorCode, errorMessage);
+      console.log("user log in error");
+      return;
+    }
 
-    await signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-        console.log("user state set");
-        setEmail(user.email);
-        setFirebaseToken(user.getIdToken);
-        console.log(user.email);
-        user_login({
-          firebase_token: user.getIdToken,
-          email: user.email,
-        });
-      })
-      // .then((userInfo) => {
-      //   // Logic for checking with db
-      // });
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorCode, errorMessage);
-        console.log("user log in error");
-      });
+    const payload = { userEmail: user.email, uid: user.uid };
+    // CURRENT ISSUE: PAYLOAD IS NOT BEING PASSED THROUGH
+    await user_login(payload);
+    console.log(payload);
   };
 
   return (
