@@ -38,8 +38,8 @@ export default function LogIn({}) {
     } catch (error) {
       const errorCode = error.code;
       const errorMessage = error.message;
-      console.log(errorCode, errorMessage);
-      console.log("user log in error");
+      // console.log(errorCode, errorMessage);
+      console.log("user log in error", error);
       return;
     }
 

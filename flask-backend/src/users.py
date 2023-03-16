@@ -1,6 +1,6 @@
 """Replace with appropriate routes for users"""
 from bson import json_util
-from flask import Blueprint, Response, request, json
+from flask import Blueprint, Response, request, json, jsonify
 # import jsonb
 # import bson.json_util as json_util
 from .services.db import get_mongo
@@ -85,7 +85,7 @@ def create_user():
         )
 
 
-@users.get("/login")
+@users.post("/login")
 def authenticate():
     """Takes in Email and Firebase Token from front-end login and checks it against users records in MongoDB
         (Further implementation needed:
@@ -93,15 +93,16 @@ def authenticate():
             - Creating post routes from within this route?)"""
     try:
         data = request.get_json()
-        email = data["email"]
-        firebase_token = data["firebase_token"]
+        # email = data["email"]
+        # firebase_token = data["firebase_token"]
 
-        return Response(
-            response=json.dumps({"message": "Data successfully retrieved from front-end", "email": email,
-                                 "firebase token": firebase_token}),
-            status=200,
-            mimetype="application/json"
-        )
+        # return Response(
+        #     response=json.dumps({"message": "Data successfully retrieved from front-end", "email": email,
+        #                          "firebase token": firebase_token}),
+        #     status=200,
+        #     mimetype="application/json"
+        # )
+        return jsonify(data)
 
     except KeyError as ke:
         return Response(

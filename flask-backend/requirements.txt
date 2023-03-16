@@ -1,0 +1,5 @@
+# pip freeze (> requirements.txt) shows (and creates a requirements.txt file) of environment packages
+# pipreq /path/to/project creates a requirements.txt file of UTILIZED environment packages
+Flask==2.2.3
+pymongo==4.3.3
+pyngrok==5.2.1
