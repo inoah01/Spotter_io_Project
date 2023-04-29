@@ -1,38 +1,25 @@
-"""Establishing MongoClient and DB instance for use across the application using singleton design pattern:
+"""Establishing PyMongo, MongoDB client instance and creating global object from specified db and collection"""
 
-    - _establish_mongo() creates the instances and returns a tuple to be accessed and declared as needed by blueprints
-    - module level variable is established with _client_instance, default is None
-    - get_mongo() checks the status of _client_instance (whether the tuple as been assigned)
-      and calls _establish_mongo() if not """
+from flask import g
+from flask_pymongo import PyMongo
+from .gcloud import access_secret_version
 
-
-from pymongo import MongoClient
-import os
+mongo = PyMongo()
 
 
-def _establish_mongo():
-    """Returns a tuple with the MongoClient instance and the database instance"""
-    try:
-        # Establish connection to MongoDB spotter-io db
-        client = MongoClient(os.environ['MONGODB_URI'], serverSelectionTimeoutMS=1000)
-        client.server_info()  # Triggering exception if unable to connect to db
-        print(client)  # Print client info as test to confirm client established
-        db = client.spotter_io
-        print(db.name)  # Print db name to verify db selection
-        return client, db
-    except Exception as e:
-        print(e)
-        raise e
+def init_db(app):
+    mongo_uri = access_secret_version('my_mongo', 'latest')
+    app.config["MONGO_URI"] = mongo_uri
+    mongo.init_app(app)
 
 
-# Module level variable
-_client_instance = None
+def get_db(database_name=None):
+    if database_name is not None:
+        g.db = mongo.db[database_name]
+    return g.db
 
 
-def get_mongo():
-    """Returns the existing client instance or creates it if one does not already exist."""
-    global _client_instance
-    if not _client_instance:
-        # Assigns client, db tuple
-        _client_instance = _establish_mongo()
-    return _client_instance
+def get_collection(collection_name=None):
+    if collection_name is not None:
+        g.collection = g.db[collection_name]
+    return g.collection
