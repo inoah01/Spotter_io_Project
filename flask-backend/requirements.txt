@@ -1,6 +1,6 @@
 # pip freeze (> requirements.txt) shows (and creates a requirements.txt file) of environment packages in venv
 # pipreq /path/to/project creates a requirements.txt file of UTILIZED environment packages of current directory
-botocore==1.29.93
+botocore==1.29.110
 bson==0.5.10
 certifi==2022.12.7
 charset-normalizer==3.1.0

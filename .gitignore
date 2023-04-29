@@ -10,10 +10,17 @@ npm-debug.*
 *.orig.*
 web-build/
 __pycache__/
-venv/
 .env
 .vscode/
 .idea/
 
 # macOS
 .DS_Store
+
+# Manual Ignores:
+**/__init__.py
+**/.flaskenv
+/flask-backend/flask_backend_venv311
+/flask-backend/app.yaml
+/flask-backend/src/services/gcloud.py
+
