@@ -7,13 +7,18 @@ export const user_login = async (payload) => {
     console.log("Data not received from handleLogIn");
     return;
   }
-  console.log(axiosClient);
+  console.log("The axios Client is: ", axiosClient.defaults);
+  console.log(payload);
 
-  await axiosClient.post("http://localhost:5443/api/v1-0-3/users/login", payload)
-      .then(response => {
-        console.log(response.data);
-      })
-      .catch(error => {
-        console.log(error);
-      })
+  await axiosClient.post("/users/login", JSON.stringify(payload), {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then(response => {
+      console.log(response.data);
+    })
+    .catch(error => {
+      console.log(error);
+    })
 };

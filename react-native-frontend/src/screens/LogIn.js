@@ -46,7 +46,6 @@ export default function LogIn({}) {
     const payload = { userEmail: user.email, uid: user.uid };
     // CURRENT ISSUE: PAYLOAD IS NOT BEING PASSED THROUGH
     await user_login(payload);
-    console.log(payload);
   };
 
   return (

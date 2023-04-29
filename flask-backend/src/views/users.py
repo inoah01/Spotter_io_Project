@@ -11,6 +11,7 @@ users = Blueprint("users", __name__, url_prefix="/api/v1-0-3/users")
 @users.before_request
 def set_db_and_collection():
     get_db('spotter_io')
+    print(get_db('spotter_io'))
     get_collection('users')
 
 
@@ -93,17 +94,16 @@ def authenticate():
             - Creating post routes from within this route?)"""
     try:
         data = request.get_json()
-        # email = data["email"]
-        # firebase_token = data["firebase_token"]
+        email = data["userEmail"]
+        firebase_token = data["uid"]
+        print("Received data: ", data)
 
-        # return Response(
-        #     response=json.dumps({"message": "Data successfully retrieved from front-end", "email": email,
-        #                          "firebase token": firebase_token}),
-        #     status=200,
-        #     mimetype="application/json"
-        # )
-        return jsonify(data)
-
+        return Response(
+            response=json.dumps({"message": "Data successfully retrieved from front-end", "email": email,
+                                 "firebase token": firebase_token}),
+            status=200,
+            mimetype="application/json"
+        )
     except KeyError as ke:
         return Response(
             response=json.dumps({"message": f"Missing key: {str(ke)}"}),
