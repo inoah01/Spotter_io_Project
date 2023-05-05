@@ -12,9 +12,9 @@ def create_app():
     app = Flask(__name__)
 
     # Get the Flask key and MongoDB URI from GC Secrets Manager
-    app.config["SECRET_KEY"] = access_secret_version('my_secret', 'latest')
+    app.config["SECRET_KEY"] = access_secret_version("my_secret", "latest")
     # Enable cross-origin AJAX
-    CORS(app, resources={r'/*': {'origins': '*'}})
+    CORS(app)
 
     # Initialize database
     db.init_db(app)
@@ -22,8 +22,8 @@ def create_app():
     # Register blueprints
     from .views.test import test
     from .views.users import users
+
     app.register_blueprint(test)
     app.register_blueprint(users)
 
     return app
-

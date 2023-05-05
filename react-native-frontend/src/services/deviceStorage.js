@@ -1,13 +1,14 @@
-import { AsyncStorage } from "react-native";
+import * as SecureStore from 'expo-secure-store';
 
-const deviceStorage = {
-  async saveItem(key, value) {
-    try {
-      await AsyncStorage.setItem(key, value);
-    } catch (error) {
-      console.log("Async Error: ", error.message);
-    }
-  },
-};
+// Store token securely
+export async function storeToken(token) {
+  await SecureStore.setItemAsync('firebaseToken', token);
+  console.log("The token is: ", token);
+}
 
-export default deviceStorage;
+// Retrieve the token
+export async function getToken() {
+  const token = await SecureStore.getItemAsync('firebaseToken');
+  return token;
+}
+

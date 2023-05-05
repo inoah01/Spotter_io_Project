@@ -1,22 +1,18 @@
-import React, { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../hooks/useAuth";
-import axios, { formToJSON } from "axios";
-import deviceStorage from "../services/deviceStorage";
-import { user_login } from "../services/api/api_utils";
+import React, {useState} from "react";
+import {StyleSheet, Text, TextInput, TouchableOpacity, View,} from "react-native";
+import {useNavigation} from "@react-navigation/native";
+import {signInWithEmailAndPassword} from "firebase/auth";
+import {auth} from "../hooks/useAuth";
+import {userLogin} from "../services/api/api_utils";
+import {storeToken} from "../services/deviceStorage";
+
 
 export default function LogIn({}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+
 
   const navigation = useNavigation();
 
@@ -29,23 +25,32 @@ export default function LogIn({}) {
     let user;
     try {
       const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
+          auth,
+          email,
+          password
       );
       user = userCredential.user;
-      console.log(user.uid);
+      console.log(typeof user);
     } catch (error) {
+      // TODO: Complete error handling for failed firebase authentication
+      //  - Email/Password incorrect?
+      //  - User not found?
       const errorCode = error.code;
       const errorMessage = error.message;
       // console.log(errorCode, errorMessage);
-      console.log("user log in error", error);
+      console.log("user log in error", errorCode, errorMessage);
       return;
     }
 
-    const payload = { userEmail: user.email, uid: user.uid };
-    // CURRENT ISSUE: PAYLOAD IS NOT BEING PASSED THROUGH
-    await user_login(payload);
+    // axios request to send Firebase token to backend for verification + storage of token upon success:
+    try {
+      await userLogin(user);
+      const idToken = await user.getIdToken();
+      await storeToken(idToken);
+    } catch (error) {
+      console.error("Error during login: ", error);
+    }
+
   };
 
   return (

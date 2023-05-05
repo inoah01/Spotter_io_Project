@@ -23,4 +23,6 @@ __pycache__/
 /flask-backend/flask_backend_venv311
 /flask-backend/app.yaml
 /flask-backend/src/services/gcloud.py
-
+**/firebase.js
+**/spotter-io-firebase-adminsdk.json
+**/app.config.js

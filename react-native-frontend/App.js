@@ -1,5 +1,5 @@
 import React from "react";
-import "./src/firebase";
+import "./src/services/firebase/firebase";
 import RootNavigation from "./src/navigator";
 
 const YourApp = () => {
