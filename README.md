@@ -8,14 +8,27 @@ Coming soon . . .
 
 
 <h3>
-To-Do as of 4/29/2023:
+To-Do as of 5/8/2023:
 </h3>
 <ul>
-<li>Finish Log-in auth flow (tokens, DB query, etc)</li>
-<li>Add implementation for alt sign in methods (external verification? - Google, Apple)</li>
-<li>Add implementation for create new user and forgot password</li>
-<li>Finish workout tracking UI (expandable list view for metrics, timer, colors, spacing of elements, etc)</li>
-<li>Implement CRUD for workout tracking</li>
-<li>Workout History page?</li>
+<li>Finish log in auth flow
+    <ul>
+        <li>User-friendly error messages for Firebase auth + backend verification</li>
+        <li>Add implementation for alt sign-in methods (Google, Apple)</li>
+    </ul>
+</li>
+<li>Add implementation for create new user and forgot password
+    <ul>
+        <li>Look into adding additional info for when user signs up via Firebase</li>
+    </ul>
+<li>Finish workout tracking UI/UX
+    <ul>
+        <li>Accordion for more info</li>
+        <li>Save workout data (CRUD)</li>
+    </ul>
+<li>Workout history page?
+    <ul>
+        <li>A part of homepage/dashboard?</li>
+    </ul>
 </ul>
 
