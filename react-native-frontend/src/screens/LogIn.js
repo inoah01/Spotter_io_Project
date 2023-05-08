@@ -1,18 +1,24 @@
-import React, {useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {StyleSheet, Text, TextInput, TouchableOpacity, View,} from "react-native";
 import {useNavigation} from "@react-navigation/native";
 import {signInWithEmailAndPassword} from "firebase/auth";
 import {auth} from "../hooks/useAuth";
-import {userLogin} from "../services/api/api_utils";
-import {storeToken} from "../services/deviceStorage";
+import ErrorModal from "../components/ErrorModal";
+import {ErrorContext} from "../components/ErrorContext";
+import {useLoginAttempts} from "../components/LoginAttemptsContext";
 
 
-export default function LogIn({}) {
+export default function LogIn({route}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
+  const [errorModalKey, setErrorModalKey] = useState("");
+  const [loginMessage, setLoginMessage] = useState("");
 
+  const { setLoginAttempts } = useLoginAttempts();
 
+  const {errorMessage, showErrorModal } = useContext(ErrorContext);
 
   const navigation = useNavigation();
 
@@ -20,6 +26,24 @@ export default function LogIn({}) {
     setShowPassword(!showPassword);
   };
 
+  const showError = (message) => {
+    setLoginMessage(message);
+    setErrorModalVisible(true);
+    setErrorModalKey(Math.random().toString());
+  };
+
+  const hideErrorModal = () => {
+    setErrorModalVisible(false);
+  }
+
+  useEffect(() => {
+    if (errorMessage) {
+      showError(errorMessage);
+      showErrorModal(null);
+    }
+  }, [errorMessage, showErrorModal]);
+
+  // For handling Firebase authentication + backend verification
   const handleLogin = async (e) => {
     e.preventDefault();
     let user;
@@ -31,6 +55,7 @@ export default function LogIn({}) {
       );
       user = userCredential.user;
       console.log(typeof user);
+      setLoginAttempts((prevAttempts) => prevAttempts + 1);
     } catch (error) {
       // TODO: Complete error handling for failed firebase authentication
       //  - Email/Password incorrect?
@@ -39,17 +64,10 @@ export default function LogIn({}) {
       const errorMessage = error.message;
       // console.log(errorCode, errorMessage);
       console.log("user log in error", errorCode, errorMessage);
-      return;
+      showError(errorMessage);
+      // return;
     }
 
-    // axios request to send Firebase token to backend for verification + storage of token upon success:
-    try {
-      await userLogin(user);
-      const idToken = await user.getIdToken();
-      await storeToken(idToken);
-    } catch (error) {
-      console.error("Error during login: ", error);
-    }
 
   };
 
@@ -60,6 +78,7 @@ export default function LogIn({}) {
         <TextInput
           style={styles.input}
           placeholder="Email"
+          secureTextEntry={false}
           value={email}
           onChangeText={(text) => setEmail(text)}
         />
@@ -96,6 +115,11 @@ export default function LogIn({}) {
       >
         <Text style={styles.loginButtonText}>Create Account</Text>
       </TouchableOpacity>
+      <ErrorModal
+        key={{errorModalKey}}
+        visible={errorModalVisible}
+        message={loginMessage}
+        onHide={() => setErrorModalVisible(false)}/>
     </View>
   );
 }
@@ -111,6 +135,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 32,
+    paddingBottom: 10
   },
   inputContainer: {
     flexDirection: "row",

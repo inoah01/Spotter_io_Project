@@ -12,3 +12,13 @@ export async function getToken() {
   return token;
 }
 
+// Clear token from storage
+export async function removeToken() {
+  try {
+    await SecureStore.deleteItemAsync('firebaseToken');
+    console.log("Token successfully deleted!")
+  } catch (error) {
+    console.error("Error removing token from device storage", error);
+  }
+}
+

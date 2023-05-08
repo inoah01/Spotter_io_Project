@@ -4,7 +4,7 @@
 
 """Replace with appropriate routes for users"""
 from werkzeug.exceptions import BadRequest
-from flask import Blueprint, Response, request, json, jsonify
+from flask import Blueprint, Response, request, json
 from bson import json_util
 from ..services.db import get_db, get_collection
 from ..authentication.auth import verify_token

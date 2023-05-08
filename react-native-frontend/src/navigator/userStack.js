@@ -8,6 +8,7 @@ import {
 } from "@react-navigation/drawer";
 import { auth } from "../hooks/useAuth";
 import { signOut } from "firebase/auth";
+import {removeToken} from "../services/deviceStorage";
 
 import Home from "../screens/Home";
 import TestPage from "../screens/TestPage";
@@ -19,7 +20,7 @@ const Drawer = createDrawerNavigator();
 export default function UserStack() {
   const handleLogout = async () => {
     await signOut(auth)
-      .then(() => {
+      .then(async () => {
         // Sign-out Successful
         console.log("Signed out Successfully");
       })
