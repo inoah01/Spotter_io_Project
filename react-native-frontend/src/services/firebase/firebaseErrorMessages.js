@@ -7,7 +7,8 @@ const firebaseErrorMessages = {
     'auth/user-not-found': 'No user found. Please create account.',
     'auth/wrong-password': 'The password is incorrect.',
     'auth/weak-password': 'The password is too weak. (<6 char)',
-    'auth/email-already-in-use': 'This email is already in use.'
+    'auth/email-already-in-use': 'This email is already in use.',
+    'auth/missing-email': 'Please enter in a valid email.'
     // Add other error messages as needed (check documentation) . . .
 };
 

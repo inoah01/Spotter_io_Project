@@ -39,18 +39,22 @@ export default function ForgotPassword() {
   }, [errorMessage, showErrorModal]);
 
   const handleForgot = async (e) => {
-    // TODO: Add implementation for sending password reset email
+    // TODO: Remove sendPasswordResetEmail
     e.preventDefault();
     try {
       const resetPassword = await sendPasswordResetEmail(auth, email);
       if ( await resetPassword) {
         console.log("Yes")
         // TODO: Create "success" / green modal for confirming password reset email
+        //        - Remove assignment of sendPasswordResetEmail -> does not return anything, check for errors
       } else {
         console.log("No", resetPassword);
       }
     } catch (error) {
-      console.error("Error sending email: ", error);
+      const errorCode = error.code;
+      errorMessage = getFirebaseErrorMessage(errorCode);
+      showErrorModal(errorMessage);
+      console.log(error);
     }
 
     setBackendAuthStatus(false);
