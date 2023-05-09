@@ -8,19 +8,21 @@ Coming soon . . .
 
 
 <h3>
-To-Do as of 5/8/2023:
+To-Do as of 5/9/2023:
 </h3>
 <ul>
-<li>Finish log in auth flow
+<li>Finish remainder of auth flow/sessions:
     <ul>
-        <li>User-friendly error messages for Firebase auth + backend verification</li>
         <li>Add implementation for alt sign-in methods (Google, Apple)</li>
+        <li>Add implementation for forgot password
+            <ul>
+                <li>Look into updating user profile w/ more info @ time of creation vs retroactively</li>
+            </ul>
+        </li>
     </ul>
+
 </li>
-<li>Add implementation for create new user and forgot password
-    <ul>
-        <li>Look into adding additional info for when user signs up via Firebase</li>
-    </ul>
+
 <li>Finish workout tracking UI/UX
     <ul>
         <li>Accordion for more info</li>

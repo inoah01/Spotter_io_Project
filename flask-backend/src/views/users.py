@@ -1,6 +1,7 @@
 # TODO:
 #   - Protect routes with @require_auth custom wrap from middlewares.py (add in before function call)
 #   - Move DB CRUD to respective file in models directory then import them in
+#   - Ensure that users/login route returns relevant, user-friendly messages
 
 """Replace with appropriate routes for users"""
 from werkzeug.exceptions import BadRequest
@@ -30,7 +31,8 @@ def get_some_users():
     try:
         # TODO: Move CRUD ops to models/users.py
         collection = get_collection()
-        cursor = collection.find_one({"email": "sachi.email@example.com"})
+        email = request.get_json()
+        cursor = collection.find_one({"email": email})
 
         if not cursor:
             raise ValueError("No matching user found")
@@ -63,21 +65,20 @@ def get_some_users():
         )
 
 
-@users.get("/create")
+@users.post("/create")
 def create_user():
-    """Will eventually need to change to taking in request.json and a POST request but:
-    Takes in a JSON with specified fields and creates a document in users collection."""
+    """Takes in a JSON with specified fields and creates a document in users collection."""
 
     try:
-        # TODO: Move CRUD ops to models/users.py
+        # TODO: Move CRUD ops to models/users.py (DONE)
         #   - Check client-side fields
+        #   - Look into using firebase uid as opposed to MongoDB default unique id
         collection = get_collection()
-        new_user = {
-            "name": {"firstName": "John", "lastName": "Doe"},
-            "email": "john.email@example.com",
-            "phoneNum": "999-999-9999",
-            "favoriteColor": "orange",
-        }
+        new_user = request.get_json()
+        if new_user:
+            print("Data received from frontend: ", new_user)
+        else:
+            print("Data NOT received from fronted: ")
 
         result = collection.insert_one(new_user)
         inserted_id = str(result.inserted_id)
@@ -110,11 +111,6 @@ def authenticate():
 
         # Verify + decode token, pull out email uid
         email, firebase_id = verify_token(token)
-
-        # # Pull out email and firebase id (matching w/ frontend keys)
-        # user_data = data.get("user")
-        # email = user_data.get("email")
-        # firebase_token = user_data.get("uid")
 
         # TEST OUTPUT to confirm reception of data
         if token:

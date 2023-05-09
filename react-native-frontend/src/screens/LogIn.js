@@ -6,9 +6,13 @@ import {auth} from "../hooks/useAuth";
 import ErrorModal from "../components/ErrorModal";
 import {ErrorContext} from "../components/ErrorContext";
 import {useLoginAttempts} from "../components/LoginAttemptsContext";
+import {getFirebaseErrorMessage} from "../services/firebase/firebaseErrorMessages";
+import {getToken, removeToken, storeToken} from "../services/deviceStorage";
+import {userLogin} from "../services/api/api_utils";
+import {BackendAuthContext} from "../components/BackendAuthContext";
 
 
-export default function LogIn({route}) {
+export default function LogIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -17,7 +21,7 @@ export default function LogIn({route}) {
   const [loginMessage, setLoginMessage] = useState("");
 
   const { setLoginAttempts } = useLoginAttempts();
-
+  const { setBackendAuthStatus } = useContext(BackendAuthContext);
   const {errorMessage, showErrorModal } = useContext(ErrorContext);
 
   const navigation = useNavigation();
@@ -27,14 +31,10 @@ export default function LogIn({route}) {
   };
 
   const showError = (message) => {
-    setLoginMessage(message);
+    setLoginMessage(message.toString());
     setErrorModalVisible(true);
     setErrorModalKey(Math.random().toString());
   };
-
-  const hideErrorModal = () => {
-    setErrorModalVisible(false);
-  }
 
   useEffect(() => {
     if (errorMessage) {
@@ -44,32 +44,53 @@ export default function LogIn({route}) {
   }, [errorMessage, showErrorModal]);
 
   // For handling Firebase authentication + backend verification
+  // TODO: Add back in bespoke userLogin call and error handling
   const handleLogin = async (e) => {
     e.preventDefault();
     let user;
     try {
-      const userCredential = await signInWithEmailAndPassword(
-          auth,
-          email,
-          password
-      );
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
       user = userCredential.user;
-      console.log(typeof user);
       setLoginAttempts((prevAttempts) => prevAttempts + 1);
+
+      // Add userLogin function call (API Request), passing in user as a parameter
+      try {
+        const loginResponse = await userLogin(user);
+        if (loginResponse.success) {
+          const idToken= await user.getIdToken();
+          await storeToken(idToken);
+          const retrievedToken = await getToken(idToken);
+          if (retrievedToken) {
+            console.log(retrievedToken);
+          } else {
+            console.log("No token retrieved");
+          }
+          setBackendAuthStatus(true);
+        } else {
+          // Handle error response from userLogin
+          const idToken = await user.getIdToken();
+          await removeToken(idToken);
+          setBackendAuthStatus(false);
+          const errorMessage = loginResponse.error;
+          showError(errorMessage);
+          console.log("Backend error: ", errorMessage);
+        }
+      } catch (error) {
+        // Handle any error during the userLogin function call
+        const idToken = await user.getIdToken();
+        await removeToken(idToken);
+        setBackendAuthStatus(false);
+        showError(error);
+        console.log("Function call error: ", error);
+      }
     } catch (error) {
-      // TODO: Complete error handling for failed firebase authentication
-      //  - Email/Password incorrect?
-      //  - User not found?
       const errorCode = error.code;
-      const errorMessage = error.message;
-      // console.log(errorCode, errorMessage);
+      const errorMessage = getFirebaseErrorMessage(errorCode);
       console.log("user log in error", errorCode, errorMessage);
       showError(errorMessage);
-      // return;
     }
-
-
   };
+
 
   return (
     <View style={styles.container}>
@@ -80,7 +101,7 @@ export default function LogIn({route}) {
           placeholder="Email"
           secureTextEntry={false}
           value={email}
-          onChangeText={(text) => setEmail(text)}
+          onChangeText={(text) => setEmail(text.toLowerCase())}
         />
       </View>
       <View style={styles.inputContainer}>
@@ -116,7 +137,7 @@ export default function LogIn({route}) {
         <Text style={styles.loginButtonText}>Create Account</Text>
       </TouchableOpacity>
       <ErrorModal
-        key={{errorModalKey}}
+        key={errorModalKey}
         visible={errorModalVisible}
         message={loginMessage}
         onHide={() => setErrorModalVisible(false)}/>

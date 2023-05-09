@@ -5,3 +5,7 @@ def check_user_exists(db_collection, email, uid):
     user = db_collection.find_one({"email": email, "firebase_uid": uid})
     return user is not None
 
+
+def create_user(db_collection, new_user_object):
+    user = db_collection.insert_one(new_user_object)
+    return user is not None

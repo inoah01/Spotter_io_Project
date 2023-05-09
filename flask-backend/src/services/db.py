@@ -8,7 +8,7 @@ mongo = PyMongo()
 
 
 def init_db(app):
-    mongo_uri = access_secret_version('my_mongo', 'latest')
+    mongo_uri = access_secret_version('my_mongo', '2')
     print(mongo_uri)
     app.config["MONGO_URI"] = mongo_uri
     mongo.init_app(app)

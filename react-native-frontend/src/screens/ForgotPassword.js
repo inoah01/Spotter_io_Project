@@ -25,7 +25,7 @@ export default function ForgotPassword() {
         You forgot your password? Let's get you back in:
       </Text>
       <Text style={styles.instructions}>
-        Please enter the email associated with the account, and an access code
+        Please enter the email associated with the account, and a password reset email
         will be sent to your inbox.
       </Text>
       <View style={styles.inputContainer}>

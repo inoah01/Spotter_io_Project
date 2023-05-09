@@ -1,70 +1,135 @@
-import React, { useState } from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {
   StyleSheet,
   Text,
   View,
   TextInput,
   TouchableOpacity,
-  FlatList,
-  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { MaskedTextInput } from "react-native-mask-text";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../hooks/useAuth";
+import {auth} from "../hooks/useAuth";
+import {getFirebaseErrorMessage} from "../services/firebase/firebaseErrorMessages";
+import {ErrorContext} from "../components/ErrorContext";
+import ErrorModal from "../components/ErrorModal";
+import {createUser, userLogin} from "../services/api/api_utils";
+import {removeToken, storeToken} from "../services/deviceStorage";
+import {BackendAuthContext} from "../components/BackendAuthContext";
 
 export default function NewAccount() {
-  // Saves correctly saves user data in object, ready for API call?
+  // Form object for signup info
   const [signupInfo, setSignupInfo] = useState({
-    firstName: "",
-    lastName: "",
+    name: {
+      firstName: "",
+      lastName: "",
+    },
     email: "",
     phoneNum: "",
     password: "",
     confirmPassword: "",
   });
-
-  // For hiding user's password
+  const [createAccountMessage, setCreateAccountMessage] = useState ("");
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
+  const [errorModalKey, setErrorModalKey] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
-  // For handling phone number formatting (...eventually)
-
   // For checking if submitted (test output)
-  const [isSubmitted, setIsSubmitted] = useState("");
+  // const [isSubmitted, setIsSubmitted] = useState("");
+  const { setBackendAuthStatus} = useContext(BackendAuthContext);
+  const navigation = useNavigation();
+
+  let {errorMessage, showErrorModal} = useContext(ErrorContext);
 
   // Toggling password visibility
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
   };
 
+  const showError = (message) => {
+    setCreateAccountMessage(message);
+    setErrorModalVisible(true);
+    setErrorModalKey(Math.random().toString());
+  };
+
+  useEffect(() => {
+    if (errorMessage) {
+      showError(errorMessage);
+      showErrorModal(null);
+    }
+  }, [errorMessage, showErrorModal]);
+
   const handleCreateAccount = async (e) => {
-    // Create account logic will go here:
-    // Validating passwords match
+    e.preventDefault();
+
+    // TODO: Add implementation for checking password strength
     if (signupInfo.password !== signupInfo.confirmPassword) {
-      console.log("Passwords do not match, populate alert message");
+      errorMessage = "Passwords do not match";
+      showError(errorMessage);
     } else {
-      await createUserWithEmailAndPassword(
-        auth,
-        signupInfo.email,
-        signupInfo.password
-      )
-        .then((userCredential) => {
-          const user = userCredential.user;
-          console.log(user);
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          console.log(errorCode, errorMessage);
-        });
-      //Test output, API auth logic will go here
-      console.log("Passwords match, make API call");
-      //Test Outputs
-      console.log(signupInfo);
-      setIsSubmitted(true);
+      try {
+        // First, create the user with Firebase
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          signupInfo.email,
+          signupInfo.password
+        );
+        const firebaseUser = userCredential.user;
+
+        // Get the firebase_uid:
+        const uid = firebaseUser.uid;
+
+        // Get signup info without password and confirm password
+        const { password, confirmPassword, ...signupInfoWithoutPasswords } = signupInfo;
+
+        // Add the Firebase UID and signup info to object
+        const signUpInfoWithUid = {
+          firebase_uid: uid,
+          ...signupInfoWithoutPasswords,
+          firebaseUser
+        };
+        console.log("Signup info with uid: ", signUpInfoWithUid);
+
+        // Then, create the user in the backend db
+        const createUserResponse = await createUser(signUpInfoWithUid);
+
+        if (createUserResponse.error) {
+          showError(createUserResponse.error);
+        } else {
+          // The user was created successfully in the backend, now handle the login process
+          const idToken = await firebaseUser.getIdToken();
+
+          // Add userLogin function call (API Request), passing in firebaseUser as parameter
+          try {
+            const loginResponse = await userLogin(firebaseUser);
+            if (loginResponse.success) {
+              await storeToken(idToken);
+              setBackendAuthStatus(true);
+            } else {
+              // Handle error response from userLogin
+              await removeToken(idToken);
+              const errorMessage = loginResponse.error;
+              showError(errorMessage);
+              console.log("Backend error: ", errorMessage);
+            }
+          } catch (error) {
+            // Handle any error during the userLogin function call
+            await removeToken(idToken);
+            setBackendAuthStatus(false);
+            showError(error);
+            console.log("Function call error: ", error);
+          }
+        }
+      } catch (error) {
+        const errorCode = error.code;
+        const errorMessage = getFirebaseErrorMessage(errorCode);
+        showError(errorMessage);
+      }
     }
   };
 
-  const navigation = useNavigation();
+
+
+
 
   return (
     <View style={styles.container}>
@@ -74,52 +139,50 @@ export default function NewAccount() {
         Please complete the fields below, biometrics and fitness goals will be
         entered later!
       </Text>
-      {/* For first name field */}
+      {/* First name field */}
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
           placeholder="First Name"
-          value={signupInfo.firstName}
+          value={signupInfo.name.firstName}
           onChangeText={(text) => {
-            setSignupInfo({ ...signupInfo, firstName: text });
-            signupInfo.firstName;
+            setSignupInfo({ ...signupInfo, name: { ...signupInfo.name, firstName: text } });
           }}
         />
       </View>
-      {/* For Last Name field */}
+      {/* Last Name field */}
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
           placeholder="Last Name"
-          value={signupInfo.lastName}
+          value={signupInfo.name.lastName}
           onChangeText={(text) => {
-            setSignupInfo({ ...signupInfo, lastName: text });
+            setSignupInfo({ ...signupInfo, name: { ...signupInfo.name, lastName: text } });
           }}
         />
       </View>
-      {/* Phone number field will go here */}
+      {/* Phone number field */}
       <View style={styles.inputContainer}>
-        <TextInput
+        <MaskedTextInput
+          mask="(999)-999-9999"
           style={styles.input}
-          keyboardType="phone-pad"
-          input
           placeholder="XXX-XXX-XXXX"
           value={signupInfo.phoneNum}
           onChangeText={(text) => {
             setSignupInfo({ ...signupInfo, phoneNum: text });
           }}
-          mask={"([000])-[000]-[0000]"}
+          keyboardType="phone-pad"
         />
       </View>
       {/* Email field */}
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
-          placeholder="Your.Email@example.com"
+          placeholder="your.email@example.com"
           value={signupInfo.email}
           keyboardType="email-address"
           onChangeText={(text) => {
-            setSignupInfo({ ...signupInfo, email: text });
+            setSignupInfo({ ...signupInfo, email: text.toLowerCase() });
           }}
         />
       </View>
@@ -143,7 +206,7 @@ export default function NewAccount() {
           </Text>
         </TouchableOpacity>
       </View>
-      {/* Create a re-enter password field and function to check if passwords match */}
+      {/* Confirm password field */}
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
@@ -175,9 +238,14 @@ export default function NewAccount() {
       >
         <Text style={styles.createAccountText}>Create Account</Text>
       </TouchableOpacity>
-      {isSubmitted && (
-        <Text style={styles.successMessage}>Info Successfully Submitted!!</Text>
-      )}
+      {/*{isSubmitted && (*/}
+      {/*  <Text style={styles.successMessage}>Info Successfully Submitted!!</Text>*/}
+      {/*)}*/}
+      <ErrorModal
+        key={{errorModalKey}}
+        visible={errorModalVisible}
+        message={createAccountMessage}
+        onHide={() => setErrorModalVisible(false)}/>
     </View>
   );
 }
