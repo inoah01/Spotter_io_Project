@@ -1,19 +1,59 @@
-import React, { useState } from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {
   StyleSheet,
   Text,
   View,
   TextInput,
   TouchableOpacity,
-  Pressable,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { sendPasswordResetEmail } from "firebase/auth";
+import {getFirebaseErrorMessage} from "../services/firebase/firebaseErrorMessages";
+import {ErrorContext} from "../components/ErrorContext";
+import ErrorModal from "../components/ErrorModal";
+import {BackendAuthContext} from "../components/BackendAuthContext";
+import {auth} from "../hooks/useAuth";
+
+
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
+  const [errorModalKey, setErrorModalKey] = useState("");
+  const [forgotPasswordMessage, setForgotPasswordMessage] = useState("");
 
-  const handleForgot = () => {
-    // Log in logic will go here
+  const {setBackendAuthStatus} = useContext(BackendAuthContext);
+  let {errorMessage, showErrorModal} = useContext(ErrorContext);
+
+  const showError = (message) => {
+    setForgotPasswordMessage(message);
+    setErrorModalVisible(true);
+    setErrorModalKey(Math.random().toString());
+  };
+
+  useEffect(() => {
+    if (errorMessage) {
+      showError(errorMessage);
+      showErrorModal(null)
+    }
+  }, [errorMessage, showErrorModal]);
+
+  const handleForgot = async (e) => {
+    // TODO: Add implementation for sending password reset email
+    e.preventDefault();
+    try {
+      const resetPassword = await sendPasswordResetEmail(auth, email);
+      if ( await resetPassword) {
+        console.log("Yes")
+        // TODO: Create "success" / green modal for confirming password reset email
+      } else {
+        console.log("No", resetPassword);
+      }
+    } catch (error) {
+      console.error("Error sending email: ", error);
+    }
+
+    setBackendAuthStatus(false);
   };
 
   const navigation = useNavigation();
@@ -28,12 +68,13 @@ export default function ForgotPassword() {
         Please enter the email associated with the account, and a password reset email
         will be sent to your inbox.
       </Text>
+      {/* Email field */}
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
           placeholder="Email"
           value={email}
-          onChangeText={(text) => setEmail(text)}
+          onChangeText={(text) => setEmail(text.toLowerCase())}
         />
       </View>
       <TouchableOpacity
@@ -43,8 +84,13 @@ export default function ForgotPassword() {
         <Text style={{ color: "blue" }}>Back to Log in?</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.submitButton} onPress={handleForgot}>
-        <Text style={styles.submitButtonText}>Get Code</Text>
+        <Text style={styles.submitButtonText}>Get Email</Text>
       </TouchableOpacity>
+      <ErrorModal
+        key={{errorModalKey}}
+        visible={errorModalVisible}
+        message={forgotPasswordMessage}
+        onHide={() => setErrorModalVisible(false)}/>
     </View>
   );
 }
